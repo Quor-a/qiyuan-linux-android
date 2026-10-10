@@ -22,22 +22,19 @@ https://github.com/Quor-a/qiyuan-linux-aarch64
 # 1. 在 Termux 里安装 proot
 pkg install proot
 
-# 2. 下载启元 aarch64 根文件系统包（busybox + 基础工具）
-BASE=https://github.com/Quor-a/qiyuan-linux-aarch64/releases/latest/download
-mkdir -p ~/qyroot && cd ~/qyroot
-for p in busybox-1.36.1-1.aarch64.qyp ncurses-6.5-1.aarch64.qyp; do
-  curl -LO $BASE/$p
-done
+# 2. 一键拉取并解包完整基础环境（glibc + busybox + bash + 常用工具，约 20 包）
+curl -LO https://raw.githubusercontent.com/Quor-a/qiyuan-linux-android/main/scripts/setup-proot.sh
+sh setup-proot.sh
 
-# 3. 解包（.qyp 头 128 字节 + gzip tar 数据段，用附带的 qyextract.sh）
-for p in *.qyp; do sh qyextract.sh "$p"; done
+# 或分步：下载包后用 qyextract.sh 解包（.qyp = 128 字节头 + gzip tar 数据段）
+# sh qyextract.sh <包.qyp> [目标目录]
 
-# 4. 进入启元环境
-proot -r ~/qyroot -0 -b /dev -b /proc -b /sys /usr/bin/busybox sh
+# 3. 进入启元环境
+proot -r ~/qyroot -0 -b /dev -b /proc -b /sys /usr/bin/bash
 ```
 
-进入后即是启元 Linux 的 aarch64 用户空间：`/usr/bin/busybox sh`、
-后续可继续装 bash、coreutils、sed、grep 等（见包仓库 PACKAGES.txt）。
+进入后即是启元 Linux 的 aarch64 用户空间：glibc 运行时 + bash/grep/sed/tar 等。
+注意：**glibc 包必须最先解包**（其余动态链接包都依赖它）。
 
 ## 路径 B：chroot（已 root）
 
@@ -80,9 +77,10 @@ python3 bin/qyandroid super --root-mb 3072
 
 ## 目录
 
-- `scripts/setup-proot.sh` — 一键在 Termux 里搭好启元 proot 环境
+- `scripts/setup-proot.sh` — 一键在 Termux 里搭好启元 proot 环境（约 20 包）
 - `scripts/chroot-enter.sh` — 已 root 设备的 chroot 进入脚本
 - `scripts/fetch-rootfs.sh` — 从包仓库拉取并解包基础根文件系统
+- `scripts/qyextract.sh` — 解包单个 .qyp（解析 QYPKG 头 + 完整性校验）
 
 ## 相关仓库
 

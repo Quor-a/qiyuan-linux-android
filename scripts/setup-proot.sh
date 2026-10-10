@@ -3,6 +3,28 @@
 set -e
 command -v proot >/dev/null || pkg install -y proot
 command -v curl  >/dev/null || pkg install -y curl
-command -v zstd  >/dev/null || pkg install -y zstd
-DIR=$(dirname "$0")
-exec sh "$DIR/fetch-rootfs.sh" "$HOME/qyroot"
+DIR=$(cd "$(dirname "$0")" && pwd)
+# qyp 数据段是 gzip tar，Termux 自带 tar 支持 -z，无需额外包。
+# 顺序：先基础库（glibc/ncurses/readline），再工具。
+# 注意 glibc 必须最先装（其余动态链接包都依赖它）。
+exec sh "$DIR/fetch-rootfs.sh" "${1:-$HOME/qyroot}" \
+  glibc-2.39-2.aarch64.qyp \
+  ncurses-6.5-1.aarch64.qyp \
+  readline-8.3-1.aarch64.qyp \
+  pcre2-10.45-1.aarch64.qyp \
+  zlib-1.3.1-1.aarch64.qyp \
+  zstd-1.5.7-1.aarch64.qyp \
+  xz-5.8.1-1.aarch64.qyp \
+  busybox-1.36.1-1.aarch64.qyp \
+  bash-5.3-1.aarch64.qyp \
+  grep-3.11-1.aarch64.qyp \
+  sed-4.9-1.aarch64.qyp \
+  tar-1.35-1.aarch64.qyp \
+  which-2.23-1.aarch64.qyp \
+  diffutils-3.11-1.aarch64.qyp \
+  file-5.46-1.aarch64.qyp \
+  procps-ng-4.0.5-1.aarch64.qyp \
+  less-668-1.aarch64.qyp \
+  findutils-4.10.0-1.aarch64.qyp \
+  gawk-5.3.1-1.aarch64.qyp \
+  util-linux-2.41-1.aarch64.qyp
