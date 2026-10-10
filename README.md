@@ -29,8 +29,8 @@ for p in busybox-1.36.1-1.aarch64.qyp ncurses-6.5-1.aarch64.qyp; do
   curl -LO $BASE/$p
 done
 
-# 3. 解包（qyp 是 tar+zstd 容器，Termux 有 tar）
-for p in *.qyp; do tar --zstd -xf "$p"; done
+# 3. 解包（.qyp 头 128 字节 + gzip tar 数据段，用附带的 qyextract.sh）
+for p in *.qyp; do sh qyextract.sh "$p"; done
 
 # 4. 进入启元环境
 proot -r ~/qyroot -0 -b /dev -b /proc -b /sys /usr/bin/busybox sh
