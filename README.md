@@ -77,10 +77,16 @@ python3 bin/qyandroid super --root-mb 3072
 
 ## 目录
 
-- `scripts/setup-proot.sh` — 一键在 Termux 里搭好启元 proot 环境（约 20 包）
+- `scripts/setup-proot.sh` — 一键在 Termux 里搭好启元 proot 环境（默认下载完整 rootfs tar.xz，`--pkgs` 逐包）
 - `scripts/chroot-enter.sh` — 已 root 设备的 chroot 进入脚本
-- `scripts/fetch-rootfs.sh` — 从包仓库拉取并解包基础根文件系统
+- `scripts/fetch-rootfs.sh` — 从包仓库拉取并解包根文件系统（完整 tar.xz 或逐包 .qyp）
 - `scripts/qyextract.sh` — 解包单个 .qyp（解析 QYPKG 头 + 完整性校验）
+
+## 下载
+
+- **完整 rootfs（55+ 包，推荐）**：aarch64 仓库 Release → `qiyuan-aarch64-rootfs-full.tar.xz`
+- **单包按需**：同 Release 的 `*.aarch64.qyp`（58 个，含 python3.13/openssl/curl/dbus 等）
+- **aarch64 live ISO**：同 Release 的 `qiyuan-aarch64-live.iso`（ARM64 内核 + UEFI 启动，qemu-system-aarch64 实测可引导至 PID 1）
 
 ## 相关仓库
 
